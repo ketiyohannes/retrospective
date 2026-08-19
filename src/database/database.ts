@@ -1,6 +1,6 @@
 import { mkdirSync } from "node:fs";
 import { homedir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve, sep } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
 import { databaseMigrations } from "./migrations/index.js";
@@ -10,14 +10,39 @@ export const DATABASE_FILENAME = "retrospective.sqlite3";
 
 export function resolveDatabasePath(
   environment: NodeJS.ProcessEnv = process.env,
+  cwd = process.cwd(),
 ): string {
   const dataDirectory =
-    environment.RETROSPECTIVE_DATA_DIR ?? environment.PLUGIN_DATA;
+    environment.RETROSPECTIVE_DATA_DIR ??
+    environment.PLUGIN_DATA ??
+    resolveInstalledPluginDataDirectory(cwd);
 
   return join(
     dataDirectory ?? join(homedir(), ".codex", "retrospective"),
     DATABASE_FILENAME,
   );
+}
+
+function resolveInstalledPluginDataDirectory(cwd: string): string | undefined {
+  const parts = resolve(cwd).split(sep);
+  const cacheIndex = parts.lastIndexOf("cache");
+
+  if (
+    cacheIndex < 2 ||
+    parts[cacheIndex - 1] !== "plugins" ||
+    parts.length < cacheIndex + 4
+  ) {
+    return undefined;
+  }
+
+  const marketplace = parts[cacheIndex + 1];
+  const plugin = parts[cacheIndex + 2];
+  if (!marketplace || !plugin) {
+    return undefined;
+  }
+
+  const codexHome = parts.slice(0, cacheIndex - 1).join(sep) || sep;
+  return join(codexHome, "plugins", "data", `${plugin}-${marketplace}`);
 }
 
 export function openDatabase(path = resolveDatabasePath()): DatabaseSync {

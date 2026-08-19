@@ -1,10 +1,19 @@
 {
   "name": "retrospective",
-  "version": "0.1.0",
-  "description": "Retrospective plugin",
+  "version": "0.1.0+codex.20260819154926",
+  "description": "Local SQLite memory built from Codex work retrospectives.",
   "author": {
-    "name": "ketiyohannes"
+    "name": "ketiyohannes",
+    "url": "https://github.com/ketiyohannes"
   },
+  "homepage": "https://github.com/ketiyohannes/retrospective",
+  "repository": "https://github.com/ketiyohannes/retrospective",
+  "keywords": [
+    "retrospective",
+    "memory",
+    "sqlite",
+    "workflow"
+  ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
@@ -13,7 +22,10 @@
     "longDescription": "Retrospective builds a local, searchable memory of lessons learned during Codex work sessions.",
     "developerName": "ketiyohannes",
     "category": "Productivity",
-    "capabilities": [],
-    "defaultPrompt": "Review this work session and preserve its reusable lessons."
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use $retrospective to review this work and preserve its reusable lessons."
   }
 }

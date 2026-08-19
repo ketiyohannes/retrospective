@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { join, resolve } from "node:path";
 
 import {
   applyKnowledgeChanges,
@@ -10,9 +11,34 @@ import {
   openDatabase,
   projectScope,
   recordPendingToolEvent,
+  resolveDatabasePath,
   searchKnowledge,
   searchScopes,
 } from "../src/index.js";
+
+test("resolves MCP storage from an installed plugin cache path", () => {
+  const codexHome = resolve("test-codex-home");
+  assert.equal(
+    resolveDatabasePath(
+      {},
+      join(
+        codexHome,
+        "plugins",
+        "cache",
+        "personal",
+        "retrospective",
+        "0.1.0",
+      ),
+    ),
+    join(
+      codexHome,
+      "plugins",
+      "data",
+      "retrospective-personal",
+      "retrospective.sqlite3",
+    ),
+  );
+});
 
 test("opens and migrates the complete schema", () => {
   const database = openDatabase(":memory:");

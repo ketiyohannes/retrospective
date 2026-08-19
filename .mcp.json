@@ -1,12 +1,12 @@
 {
-  "retrospective": {
-    "command": "node",
-    "args": [
-      "--no-warnings",
-      "${PLUGIN_ROOT}/dist/runtime/mcp/server.js"
-    ],
-    "env": {
-      "RETROSPECTIVE_DATA_DIR": "${PLUGIN_DATA}"
+  "mcpServers": {
+    "retrospective": {
+      "command": "node",
+      "args": [
+        "--no-warnings",
+        "dist/runtime/mcp/server.js"
+      ],
+      "cwd": "."
     }
   }
 }
