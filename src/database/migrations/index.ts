@@ -1,4 +1,5 @@
 import { createKnowledgeSchema } from "./001-create-knowledge.js";
+import { createToolEventsSchema } from "./002-create-tool-events.js";
 
 export interface DatabaseMigration {
   version: number;
@@ -7,4 +8,5 @@ export interface DatabaseMigration {
 
 export const databaseMigrations: readonly DatabaseMigration[] = [
   createKnowledgeSchema,
+  createToolEventsSchema,
 ];
