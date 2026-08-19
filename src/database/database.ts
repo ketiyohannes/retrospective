@@ -1,0 +1,93 @@
+import { mkdirSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { DatabaseSync } from "node:sqlite";
+
+import { databaseMigrations } from "./migrations/index.js";
+import { createKnowledgeFallbackSchema } from "./migrations/001-create-knowledge.js";
+
+export const DATABASE_FILENAME = "retrospective.sqlite3";
+
+export function resolveDatabasePath(
+  environment: NodeJS.ProcessEnv = process.env,
+): string {
+  const dataDirectory =
+    environment.RETROSPECTIVE_DATA_DIR ?? environment.PLUGIN_DATA;
+
+  if (!dataDirectory) {
+    throw new Error("PLUGIN_DATA or RETROSPECTIVE_DATA_DIR must be set");
+  }
+
+  return join(dataDirectory, DATABASE_FILENAME);
+}
+
+export function openDatabase(path = resolveDatabasePath()): DatabaseSync {
+  if (path !== ":memory:") {
+    mkdirSync(dirname(path), { recursive: true });
+  }
+
+  const database = new DatabaseSync(path);
+
+  try {
+    database.exec("PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 1000;");
+
+    if (path !== ":memory:") {
+      database.exec("PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL;");
+    }
+
+    applyMigrations(database);
+    return database;
+  } catch (error) {
+    database.close();
+    throw error;
+  }
+}
+
+export function applyMigrations(database: DatabaseSync): void {
+  const versionRow = database.prepare("PRAGMA user_version").get() as
+    | { user_version: number }
+    | undefined;
+  const currentVersion = versionRow?.user_version ?? 0;
+  const latestVersion = databaseMigrations.at(-1)?.version ?? 0;
+
+  if (currentVersion > latestVersion) {
+    throw new Error(
+      `Database version ${currentVersion} is newer than supported version ${latestVersion}`,
+    );
+  }
+
+  for (const migration of databaseMigrations) {
+    if (migration.version <= currentVersion) {
+      continue;
+    }
+
+    try {
+      inTransaction(database, () => database.exec(migration.sql));
+    } catch (error) {
+      if (migration.version === 1 && isMissingFts5(error)) {
+        inTransaction(database, () =>
+          database.exec(createKnowledgeFallbackSchema.sql),
+        );
+        continue;
+      }
+
+      throw error;
+    }
+  }
+}
+
+export function inTransaction<T>(database: DatabaseSync, action: () => T): T {
+  database.exec("BEGIN IMMEDIATE");
+
+  try {
+    const result = action();
+    database.exec("COMMIT");
+    return result;
+  } catch (error) {
+    database.exec("ROLLBACK");
+    throw error;
+  }
+}
+
+function isMissingFts5(error: unknown): boolean {
+  return error instanceof Error && error.message.includes("no such module: fts5");
+}
