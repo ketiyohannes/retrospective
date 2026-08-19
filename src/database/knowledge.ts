@@ -182,7 +182,21 @@ export function applyKnowledgeChanges(
   }
 
   return inTransaction(database, () =>
-    changes.map((change) => applyKnowledgeChange(database, sourceSessionId, change)),
+    applyKnowledgeChangesInTransaction(database, sourceSessionId, changes),
+  );
+}
+
+export function applyKnowledgeChangesInTransaction(
+  database: DatabaseSync,
+  sourceSessionId: string,
+  changes: readonly KnowledgeChange[],
+): AppliedKnowledgeChange[] {
+  if (!sourceSessionId.trim()) {
+    throw new Error("Source session id cannot be empty");
+  }
+
+  return changes.map((change) =>
+    applyKnowledgeChange(database, sourceSessionId, change),
   );
 }
 

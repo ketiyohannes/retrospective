@@ -6,6 +6,7 @@
     "name": "ketiyohannes"
   },
   "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Retrospective",
     "shortDescription": "Carry useful lessons across Codex work sessions.",

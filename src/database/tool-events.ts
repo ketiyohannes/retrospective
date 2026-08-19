@@ -98,6 +98,22 @@ export function countCompletedToolEvents(
   return row.count;
 }
 
+export function findLatestCompletedSessionId(
+  database: DatabaseSync,
+): string | undefined {
+  const row = database
+    .prepare(`
+      SELECT session_id
+      FROM tool_events
+      WHERE outcome <> 'pending'
+      ORDER BY rowid DESC
+      LIMIT 1
+    `)
+    .get() as { session_id: string } | undefined;
+
+  return row?.session_id;
+}
+
 export function clearSessionToolEvents(
   database: DatabaseSync,
   sessionId: string,

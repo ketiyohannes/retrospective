@@ -2,3 +2,5 @@ interface:
   display_name: "Retrospective"
   short_description: "Preserve lessons from completed Codex work"
   default_prompt: "Use $retrospective to review this work and preserve its reusable lessons."
+policy:
+  allow_implicit_invocation: true

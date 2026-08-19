@@ -1,4 +1,5 @@
 import { mkdirSync } from "node:fs";
+import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
@@ -13,11 +14,10 @@ export function resolveDatabasePath(
   const dataDirectory =
     environment.RETROSPECTIVE_DATA_DIR ?? environment.PLUGIN_DATA;
 
-  if (!dataDirectory) {
-    throw new Error("PLUGIN_DATA or RETROSPECTIVE_DATA_DIR must be set");
-  }
-
-  return join(dataDirectory, DATABASE_FILENAME);
+  return join(
+    dataDirectory ?? join(homedir(), ".codex", "retrospective"),
+    DATABASE_FILENAME,
+  );
 }
 
 export function openDatabase(path = resolveDatabasePath()): DatabaseSync {

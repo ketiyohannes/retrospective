@@ -1,4 +1,41 @@
 {
-  "description": "Lifecycle hooks for the Retrospective plugin.",
-  "hooks": {}
+  "description": "Capture tool evidence, retrieve relevant knowledge, and run automatic retrospectives.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node --no-warnings \"${PLUGIN_ROOT}/dist/runtime/hooks/pre-tool-use.js\"",
+            "timeout": 5,
+            "additionalContextLimit": 1200
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node --no-warnings \"${PLUGIN_ROOT}/dist/runtime/hooks/post-tool-use.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node --no-warnings \"${PLUGIN_ROOT}/dist/runtime/hooks/stop.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
 }

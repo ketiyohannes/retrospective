@@ -27,6 +27,7 @@ export {
 
 export {
   applyKnowledgeChanges,
+  applyKnowledgeChangesInTransaction,
   getKnowledge,
   searchKnowledge,
   type AppliedKnowledgeChange,
@@ -51,7 +52,15 @@ export {
   clearSessionToolEvents,
   completeToolEvent,
   countCompletedToolEvents,
+  findLatestCompletedSessionId,
   listCompletedToolEvents,
   recordPendingToolEvent,
   type PendingToolEvent,
 } from "./database/tool-events.js";
+
+export {
+  applyRetrospective,
+  getRetrospectiveContext,
+  type AppliedRetrospective,
+  type RetrospectiveContext,
+} from "./retrospective/service.js";
