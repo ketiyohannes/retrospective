@@ -1,0 +1,24 @@
+{
+  "name": "retrospective",
+  "owner": {
+    "name": "ketiyohannes",
+    "url": "https://github.com/ketiyohannes"
+  },
+  "metadata": {
+    "description": "Local, searchable lessons from coding sessions"
+  },
+  "plugins": [
+    {
+      "name": "retrospective",
+      "source": "./plugins/retrospective",
+      "description": "Preserve and retrieve local workflow lessons across sessions",
+      "category": "productivity",
+      "tags": [
+        "memory",
+        "retrospective",
+        "sqlite",
+        "workflow"
+      ]
+    }
+  ]
+}

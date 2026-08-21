@@ -14,6 +14,13 @@ export interface PostToolUseInput extends PreToolUseInput {
   tool_response: unknown;
 }
 
+export interface PostToolUseFailureInput extends PreToolUseInput {
+  hook_event_name: "PostToolUseFailure";
+  error: string;
+  is_interrupt?: boolean;
+  duration_ms?: number;
+}
+
 export interface StopInput extends CommonHookInput {
   stop_hook_active: boolean;
 }

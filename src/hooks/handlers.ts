@@ -11,6 +11,7 @@ import {
 import type {
   AdditionalContextOutput,
   ContinueTurnOutput,
+  PostToolUseFailureInput,
   PostToolUseInput,
   PreToolUseInput,
   StopInput,
@@ -91,6 +92,41 @@ export function handlePostToolUse(
   }
 }
 
+export function handlePostToolUseFailure(
+  database: DatabaseSync,
+  input: PostToolUseFailureInput,
+): void {
+  if (isRetrospectiveTool(input.tool_name)) {
+    return;
+  }
+
+  const result = serializeValue(
+    {
+      error: input.error,
+      is_interrupt: input.is_interrupt,
+      duration_ms: input.duration_ms,
+    },
+    MAX_EVENT_TEXT,
+  );
+  const updated = completeToolEvent(
+    database,
+    input.tool_use_id,
+    result,
+    "error",
+  );
+
+  if (!updated) {
+    recordPendingToolEvent(database, {
+      toolUseId: input.tool_use_id,
+      sessionId: input.session_id,
+      scope: projectScope(input.cwd),
+      toolName: input.tool_name,
+      input: serializeValue(input.tool_input, MAX_EVENT_TEXT),
+    });
+    completeToolEvent(database, input.tool_use_id, result, "error");
+  }
+}
+
 export function handleStop(
   database: DatabaseSync,
   input: StopInput,
@@ -106,7 +142,7 @@ export function handleStop(
     decision: "block",
     reason: [
       `Run the automatic retrospective for session ${input.session_id}.`,
-      "Invoke $retrospective and use its MCP tools to review the recorded evidence, reconcile reusable knowledge, and clear the processed events.",
+      "Run the bundled retrospective skill and use its MCP tools to review the recorded evidence, reconcile reusable knowledge, and clear the processed events.",
       "Do not repeat the prior answer, expose chain-of-thought, or ask the user for confirmation. Keep any final confirmation to one short sentence.",
     ].join(" "),
   };

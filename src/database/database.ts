@@ -15,6 +15,7 @@ export function resolveDatabasePath(
   const dataDirectory =
     environment.RETROSPECTIVE_DATA_DIR ??
     environment.PLUGIN_DATA ??
+    environment.CLAUDE_PLUGIN_DATA ??
     resolveInstalledPluginDataDirectory(cwd);
 
   return join(

@@ -9,6 +9,7 @@ import {
 } from "../src/index.js";
 import {
   handlePostToolUse,
+  handlePostToolUseFailure,
   handlePreToolUse,
   handleStop,
 } from "../src/hooks/handlers.js";
@@ -60,7 +61,7 @@ test("pre and post hooks retrieve knowledge and persist outcomes", () => {
         hook_event_name: "Stop",
         stop_hook_active: false,
       })?.reason ?? "",
-      /\$retrospective/,
+      /bundled retrospective skill/,
     );
   } finally {
     database.close();
@@ -91,6 +92,29 @@ test("hooks ignore their own MCP tools and do not repeat a stop continuation", (
       }),
       undefined,
     );
+  } finally {
+    database.close();
+  }
+});
+
+test("Claude failure hook records top-level error details", () => {
+  const database = openDatabase(":memory:");
+
+  try {
+    handlePostToolUseFailure(database, {
+      session_id: "session-claude",
+      cwd: "/workspace/project",
+      hook_event_name: "PostToolUseFailure",
+      tool_name: "Bash",
+      tool_use_id: "tool-failure",
+      tool_input: { command: "npm test" },
+      error: "Command exited with status 1",
+      duration_ms: 100,
+    });
+
+    const [event] = listCompletedToolEvents(database, "session-claude");
+    assert.equal(event?.outcome, "error");
+    assert.match(event?.result ?? "", /status 1/);
   } finally {
     database.close();
   }

@@ -40,6 +40,17 @@ test("resolves MCP storage from an installed plugin cache path", () => {
   );
 });
 
+test("uses host-provided persistent plugin data directories", () => {
+  assert.equal(
+    resolveDatabasePath({ CLAUDE_PLUGIN_DATA: "/claude/plugin-data" }),
+    join("/claude/plugin-data", "retrospective.sqlite3"),
+  );
+  assert.equal(
+    resolveDatabasePath({ PLUGIN_DATA: "/codex/plugin-data" }),
+    join("/codex/plugin-data", "retrospective.sqlite3"),
+  );
+});
+
 test("opens and migrates the complete schema", () => {
   const database = openDatabase(":memory:");
 

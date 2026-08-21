@@ -5,6 +5,7 @@ await build({
     "mcp/server": "src/mcp/server.ts",
     "hooks/pre-tool-use": "src/hooks/pre-tool-use.ts",
     "hooks/post-tool-use": "src/hooks/post-tool-use.ts",
+    "hooks/post-tool-use-failure": "src/hooks/post-tool-use-failure.ts",
     "hooks/stop": "src/hooks/stop.ts",
   },
   outdir: "dist/runtime",
@@ -13,6 +14,6 @@ await build({
   format: "esm",
   target: "node22",
   packages: "bundle",
-  sourcemap: true,
+  sourcemap: false,
   minify: false,
 });

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "retrospective": {
+      "command": "node",
+      "args": [
+        "--no-warnings",
+        "dist/runtime/mcp/server.js"
+      ],
+      "cwd": "."
+    }
+  }
+}
