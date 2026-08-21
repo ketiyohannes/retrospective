@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "retrospective",
+  "displayName": "Retrospective",
+  "version": "0.1.0",
+  "description": "Local SQLite memory built from work-session retrospectives.",
+  "author": {
+    "name": "ketiyohannes",
+    "url": "https://github.com/ketiyohannes"
+  },
+  "homepage": "https://github.com/ketiyohannes/retrospective",
+  "repository": "https://github.com/ketiyohannes/retrospective",
+  "keywords": [
+    "retrospective",
+    "memory",
+    "sqlite",
+    "workflow"
+  ],
+  "hooks": "./hooks/claude-hooks.json",
+  "mcpServers": "./.mcp.claude.json"
+}

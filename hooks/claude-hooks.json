@@ -1,0 +1,17 @@
+{
+  "description": "Capture Claude Code tool failures for retrospective analysis.",
+  "hooks": {
+    "PostToolUseFailure": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node --no-warnings \"${CLAUDE_PLUGIN_ROOT}/dist/runtime/hooks/post-tool-use-failure.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

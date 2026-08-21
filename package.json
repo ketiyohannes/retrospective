@@ -2,19 +2,26 @@
   "name": "retrospective",
   "version": "0.1.0",
   "private": true,
-  "description": "A local-first Codex plugin for carrying lessons across work sessions.",
+  "description": "A local-first Codex and Claude Code plugin for carrying lessons across work sessions.",
   "type": "module",
   "engines": {
-    "node": ">=26"
+    "node": ">=22.14"
   },
   "scripts": {
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && tsc && node scripts/bundle.mjs && node scripts/package-plugin.mjs",
+    "check": "npm run typecheck && npm test",
     "clean": "node scripts/clean.mjs",
+    "package:plugin": "npm run build",
     "test": "npm run build && node --test dist/tests/*.test.js",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",
+    "esbuild": "^0.28.2",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.4.3"
   }
 }
